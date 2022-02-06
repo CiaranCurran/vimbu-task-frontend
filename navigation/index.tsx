@@ -12,7 +12,7 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { ColorSchemeName, Pressable } from "react-native";
+import { ColorSchemeName, Pressable, StyleSheet } from "react-native";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
@@ -105,6 +105,8 @@ function BottomTabNavigator() {
               />
             </Pressable>
           ),
+          headerStyle: styles.header,
+          tabBarStyle: styles.tabBar,
         })}
       />
       <BottomTab.Screen
@@ -128,3 +130,13 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
+
+const styles = StyleSheet.create({
+  header: {
+    shadowColor: "transparent",
+  },
+  tabBar: {
+    borderTopWidth: 0,
+    elevation: 0,
+  },
+});
