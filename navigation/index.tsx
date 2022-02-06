@@ -19,7 +19,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import TabOneScreen from "../screens/TabOneScreen";
-import TabTwoScreen from "../screens/TabTwoScreen";
+import SearchScreen from "../screens/SearchScreen";
 import {
   RootStackParamList,
   RootTabParamList,
@@ -82,6 +82,8 @@ function BottomTabNavigator() {
       initialRouteName="TabOne"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
+        headerStyle: styles.header,
+        tabBarStyle: styles.tabBar,
       }}
     >
       <BottomTab.Screen
@@ -105,13 +107,11 @@ function BottomTabNavigator() {
               />
             </Pressable>
           ),
-          headerStyle: styles.header,
-          tabBarStyle: styles.tabBar,
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
+        name="SearchScreen"
+        component={SearchScreen}
         options={{
           title: "Tab Two",
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
