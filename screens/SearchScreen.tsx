@@ -1,25 +1,35 @@
 import {
   ColorSchemeName,
   Dimensions,
+  ImageBackground,
   Platform,
   StyleSheet,
+  Image,
 } from "react-native";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, useThemeColor, View } from "../components/Themed";
-
+import { resorts } from "../dummy";
 import MapView, { MapEvent, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import { createRef, useMemo, useRef, useState } from "react";
+import { createRef, useEffect, useMemo, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { Resort } from "../types";
 
 export default function SearchScreen() {
   const colorScheme = useColorScheme();
   const styles = useMemo(() => themedStyles(colorScheme), [colorScheme]);
   const [showDetails, setShowDetails] = useState(false);
-
+  const [resorts, setResorts] = useState<Resort[]>([]);
   const map = useRef<MapView>(null);
+
+  useEffect(() => {
+    const fetchResorts = () => {
+      setResorts(resorts);
+    };
+    fetchResorts();
+  }, []);
 
   const markerPressHandler = (event: MapEvent) => {
     setShowDetails(true);
@@ -35,11 +45,11 @@ export default function SearchScreen() {
     );
   };
 
-  const onPressToExitHandler = (event: MapEvent) => {
+  const onPressToExitHandler = () => {
     setShowDetails(false);
     map.current?.animateCamera(
       {
-        center: event.nativeEvent.coordinate,
+        center: { latitude: 48.9049353, longitude: 11.3947024 },
         pitch: 2,
         heading: 0,
         altitude: 2000,
@@ -75,22 +85,63 @@ export default function SearchScreen() {
             borderRadius: 20,
           }}
         >
-          <Marker
-            coordinate={{ latitude: 48.9, longitude: 11.39 }}
-            onPress={markerPressHandler}
-            title={"marker"}
-            onSelect={() => {
-              console.log("selected");
-            }}
-          />
+          {resorts.map((resort) => (
+            <Marker
+              key={resort.id}
+              coordinate={resort.coordinates}
+              onPress={markerPressHandler}
+              title={"marker"}
+              onSelect={() => {
+                console.log("selected");
+              }}
+            />
+          ))}
         </MapView>
         {showDetails && (
-          <View style={styles.detailsContainer} pointerEvents="none">
-            <LinearGradient
-              colors={["rgba(255,255,255,0)", "rgba(0,209,255,1)"]}
-              style={styles.gradientOverlay}
-            />
-          </View>
+          <>
+            <View style={styles.detailsContainer} pointerEvents="none">
+              <ImageBackground
+                resizeMode="cover"
+                source={{ uri: resorts[0].image }}
+                imageStyle={{
+                  borderRadius: 20,
+                  height: "100%",
+                  width: "100%",
+                  overflow: "hidden",
+                }}
+                style={{
+                  width: "95%",
+                  height: "20%",
+                  position: "absolute",
+                  top: "5%",
+                }}
+              >
+                <View
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0,0,0,0.4)",
+                    borderRadius: 20,
+                    position: "absolute",
+                  }}
+                />
+                <View style={styles.detailsHeaderContent}>
+                  <Text style={styles.headerTitle}>{resorts[0].name}</Text>
+                  <Text style={styles.subHeader}>{resorts[0].country}</Text>
+                </View>
+              </ImageBackground>
+              <LinearGradient
+                colors={["rgba(255,255,255,0)", "rgba(0,209,255,1)"]}
+                style={styles.gradientOverlay}
+              />
+            </View>
+            <Text
+              style={{ position: "absolute", bottom: 10 }}
+              onPress={onPressToExitHandler}
+            >
+              {"Return to map"}
+            </Text>
+          </>
         )}
       </View>
     </View>
@@ -126,6 +177,7 @@ const themedStyles = (colorScheme: NonNullable<ColorSchemeName>) =>
       width: "80%",
     },
     detailsContainer: {
+      flex: 1,
       width: "100%",
       height: "100%",
       position: "absolute",
@@ -142,11 +194,27 @@ const themedStyles = (colorScheme: NonNullable<ColorSchemeName>) =>
       height: "10%",
       backgroundColor: Colors[colorScheme].background,
     },
+    detailsHeaderContent: {
+      width: "100%",
+      height: "100%",
+      padding: 5,
+      backgroundColor: "transparent",
+    },
     gradientOverlay: {
       width: "100%",
       height: "40%",
       position: "absolute",
       bottom: 0,
       borderRadius: 20,
+    },
+    headerTitle: {
+      color: Colors.dark.text,
+      fontSize: 30,
+      fontWeight: "bold",
+    },
+    subHeader: {
+      color: Colors.light.tint,
+      fontSize: 20,
+      fontWeight: "bold",
     },
   });

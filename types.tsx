@@ -36,3 +36,20 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
     BottomTabScreenProps<RootTabParamList, Screen>,
     NativeStackScreenProps<RootStackParamList>
   >;
+
+export interface Instructor {
+  name: string;
+  id: string;
+  resort: Resort;
+}
+
+export interface Resort {
+  name: string;
+  id: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  country: string;
+  instructors: Instructor[];
+}
