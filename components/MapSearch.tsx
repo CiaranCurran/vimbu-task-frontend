@@ -10,8 +10,9 @@ import MapView, { PROVIDER_GOOGLE, Marker, MapEvent } from "react-native-maps";
 import useColorScheme from "../hooks/useColorScheme";
 import React, { useRef, useState } from "react";
 import { Resort } from "../types";
-import Animated, { FadeIn, ZoomInUp } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, ZoomInUp } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
+import { InstructorList } from "./InstructorList";
 
 export type MapSearchProps = {
   resorts: Resort[];
@@ -95,6 +96,7 @@ export function MapSearch({ resorts }: MapSearchProps) {
             style={styles.detailsContainer}
             pointerEvents="none"
             entering={FadeIn.duration(1000)}
+            exiting={FadeOut.duration(500)}
           >
             <Animated.View
               style={{
@@ -149,6 +151,17 @@ export function MapSearch({ resorts }: MapSearchProps) {
           >
             {"Return to map"}
           </Text>
+          <View
+            style={{
+              width: "100%",
+              height: "20%",
+              backgroundColor: "transparent",
+              position: "absolute",
+              bottom: "10%",
+            }}
+          >
+            <InstructorList instructors={selectedResort?.instructors} />
+          </View>
         </>
       )}
     </View>
@@ -177,7 +190,6 @@ const themedStyles = (colorScheme: NonNullable<ColorSchemeName>) =>
       fontSize: 20,
       fontWeight: "bold",
     },
-
     detailsContainer: {
       flex: 1,
       width: "100%",
