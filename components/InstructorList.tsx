@@ -1,18 +1,27 @@
-import { View, Text, ScrollView, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Image,
+  TouchableNativeFeedback,
+} from "react-native";
 import { useState, useRef } from "react";
 import Animated from "react-native-reanimated";
 import { Instructor } from "../types";
 import Colors from "../constants/Colors";
+import { useNavigation } from "@react-navigation/native";
 
 export type InstructorListProps = {
   instructors: Instructor[] | undefined;
 };
 
 const ITEMWIDTH = 300;
-const ITEMMARGIN = 20;
+const ITEMMARGIN = 10;
 const ITEMLENGTHX = ITEMWIDTH + ITEMMARGIN * 2;
 
 export function InstructorList({ instructors }: InstructorListProps) {
+  const navigation = useNavigation();
   const list = useRef<any>({});
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
@@ -37,6 +46,7 @@ export function InstructorList({ instructors }: InstructorListProps) {
         showsHorizontalScrollIndicator={false}
         horizontal={true}
         onScroll={(e) => setOffset(e.nativeEvent.contentOffset.x)}
+        scrollEventThrottle={16}
       >
         {instructors?.map((item, i) => (
           <View
@@ -80,21 +90,35 @@ export function InstructorList({ instructors }: InstructorListProps) {
             }}
             key={i}
           >
-            <View style={styles.instructorView}>
-              <Image
-                style={styles.instructorImage}
-                source={{ uri: item.image }}
-              />
-              <Text
+            <TouchableNativeFeedback
+              style={styles.instructorView}
+              onPress={() => {
+                navigation.navigate("InstructorScreen", item);
+              }}
+            >
+              <View
                 style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  color: Colors.light.tint,
+                  height: "100%",
+                  width: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                {item.firstName + " " + item.lastName}
-              </Text>
-            </View>
+                <Image
+                  style={styles.instructorImage}
+                  source={{ uri: item.image }}
+                />
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    color: Colors.light.tint,
+                  }}
+                >
+                  {item.firstName + " " + item.lastName}
+                </Text>
+              </View>
+            </TouchableNativeFeedback>
           </View>
         ))}
       </ScrollView>
