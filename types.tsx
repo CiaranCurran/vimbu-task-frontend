@@ -38,7 +38,9 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
   >;
 
 export interface Instructor {
-  name: string;
+  firstName: string;
+  lastName: string;
+  rate: number;
   id: string;
   resort: Resort;
 }
@@ -50,4 +52,5 @@ export interface Resort {
   longitude: number;
   country: string;
   image: string;
+  instructors: Instructor[];
 }

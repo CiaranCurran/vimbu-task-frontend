@@ -9,6 +9,11 @@ export const GET_RESORTS = gql`
       image
       country
       id
+      instructors {
+        firstName
+        lastName
+        rate
+      }
     }
   }
 `;
