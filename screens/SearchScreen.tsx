@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, useThemeColor, View } from "../components/Themed";
 import { resorts } from "../dummy";
@@ -15,23 +14,21 @@ import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import { createRef, useEffect, useMemo, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { useQuery } from "@apollo/client";
+import { GET_RESORTS } from "../graphql/queries";
 import { Resort } from "../types";
+import Animated, { FadeIn, ZoomInUp } from "react-native-reanimated";
 
 export default function SearchScreen() {
   const colorScheme = useColorScheme();
   const styles = useMemo(() => themedStyles(colorScheme), [colorScheme]);
   const [showDetails, setShowDetails] = useState(false);
-  const [resorts, setResorts] = useState<Resort[]>([]);
+  const { loading, error, data } = useQuery(GET_RESORTS);
   const map = useRef<MapView>(null);
+  const [selectedResort, setSelectedResort] = useState<Resort>();
 
-  useEffect(() => {
-    const fetchResorts = () => {
-      setResorts(resorts);
-    };
-    fetchResorts();
-  }, []);
-
-  const markerPressHandler = (event: MapEvent) => {
+  const markerPressHandler = (event: MapEvent, resort: Resort) => {
+    setSelectedResort(resort);
     setShowDetails(true);
     map.current?.animateCamera(
       {
@@ -81,16 +78,20 @@ export default function SearchScreen() {
           style={{
             width: "100%",
             height: "100%",
-            backgroundColor: "white",
+            backgroundColor: Colors[colorScheme].background,
             borderRadius: 20,
           }}
         >
-          {resorts.map((resort) => (
+          {data?.resorts?.map((resort: Resort) => (
             <Marker
               key={resort.id}
-              coordinate={resort.coordinates}
-              onPress={markerPressHandler}
-              title={"marker"}
+              coordinate={{
+                latitude: resort.latitude,
+                longitude: resort.longitude,
+              }}
+              onPress={(event) => markerPressHandler(event, resort)}
+              title={resort.name}
+              pinColor={Colors.light.tint}
               onSelect={() => {
                 console.log("selected");
               }}
@@ -99,42 +100,60 @@ export default function SearchScreen() {
         </MapView>
         {showDetails && (
           <>
-            <View style={styles.detailsContainer} pointerEvents="none">
-              <ImageBackground
-                resizeMode="cover"
-                source={{ uri: resorts[0].image }}
-                imageStyle={{
-                  borderRadius: 20,
-                  height: "100%",
-                  width: "100%",
-                  overflow: "hidden",
-                }}
+            <Animated.View
+              style={styles.detailsContainer}
+              pointerEvents="none"
+              entering={FadeIn.duration(1000)}
+            >
+              <Animated.View
                 style={{
-                  width: "95%",
-                  height: "20%",
-                  position: "absolute",
-                  top: "5%",
+                  width: "100%",
+                  height: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
+                entering={ZoomInUp.duration(500)}
               >
-                <View
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "rgba(0,0,0,0.4)",
+                <ImageBackground
+                  resizeMode="cover"
+                  source={{ uri: selectedResort?.image }}
+                  imageStyle={{
                     borderRadius: 20,
-                    position: "absolute",
+                    height: "100%",
+                    width: "100%",
+                    overflow: "hidden",
                   }}
-                />
-                <View style={styles.detailsHeaderContent}>
-                  <Text style={styles.headerTitle}>{resorts[0].name}</Text>
-                  <Text style={styles.subHeader}>{resorts[0].country}</Text>
-                </View>
-              </ImageBackground>
+                  style={{
+                    width: "95%",
+                    height: "20%",
+                    position: "absolute",
+                    top: "5%",
+                  }}
+                >
+                  <View
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: "rgba(0,0,0,0.4)",
+                      borderRadius: 20,
+                      position: "absolute",
+                    }}
+                  />
+                  <View style={styles.detailsHeaderContent}>
+                    <Text style={styles.headerTitle}>
+                      {selectedResort?.name}
+                    </Text>
+                    <Text style={styles.subHeader}>
+                      {selectedResort?.country}
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </Animated.View>
               <LinearGradient
                 colors={["rgba(255,255,255,0)", "rgba(0,209,255,1)"]}
                 style={styles.gradientOverlay}
               />
-            </View>
+            </Animated.View>
             <Text
               style={{ position: "absolute", bottom: 10 }}
               onPress={onPressToExitHandler}
@@ -197,7 +216,7 @@ const themedStyles = (colorScheme: NonNullable<ColorSchemeName>) =>
     detailsHeaderContent: {
       width: "100%",
       height: "100%",
-      padding: 5,
+      padding: 10,
       backgroundColor: "transparent",
     },
     gradientOverlay: {
@@ -216,5 +235,8 @@ const themedStyles = (colorScheme: NonNullable<ColorSchemeName>) =>
       color: Colors.light.tint,
       fontSize: 20,
       fontWeight: "bold",
+      padding: 0,
+      margin: 0,
+      lineHeight: 22,
     },
   });

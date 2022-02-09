@@ -46,10 +46,8 @@ export interface Instructor {
 export interface Resort {
   name: string;
   id: string;
-  coordinates: {
-    latitude: number;
-    longitude: number;
-  };
+  latitude: number;
+  longitude: number;
   country: string;
-  instructors: Instructor[];
+  image: string;
 }
