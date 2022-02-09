@@ -7,7 +7,6 @@ import {
   TouchableNativeFeedback,
 } from "react-native";
 import { useState, useRef } from "react";
-import Animated from "react-native-reanimated";
 import { Instructor } from "../types";
 import Colors from "../constants/Colors";
 import { useNavigation } from "@react-navigation/native";
@@ -93,7 +92,7 @@ export function InstructorList({ instructors }: InstructorListProps) {
             <TouchableNativeFeedback
               style={styles.instructorView}
               onPress={() => {
-                navigation.navigate("InstructorScreen", item);
+                navigation.navigate("InstructorScreen");
               }}
             >
               <View

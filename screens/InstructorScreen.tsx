@@ -1,19 +1,8 @@
-import { Private } from "@babel/types";
-import {
-  NavigationProp,
-  Route,
-  RouteProp,
-  StackActions,
-  useNavigation,
-} from "@react-navigation/native";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RouteProp, StackActions } from "@react-navigation/native";
 import { Platform, StyleSheet, Image } from "react-native";
-import { ScreenProps } from "react-native-screens";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
-import { RootTabScreenProps, Instructor } from "../types";
+import { Instructor } from "../types";
 
 type InstructorScreenParamList = {
   route: RouteProp<{ params: { instructorParam: Instructor } }, "params">;

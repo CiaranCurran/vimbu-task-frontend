@@ -1,9 +1,7 @@
 import { StyleSheet } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 import { RootTabScreenProps } from "../types";
-import Colors from "../constants/Colors";
 
 export default function TabOneScreen({
   navigation,
