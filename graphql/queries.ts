@@ -13,6 +13,7 @@ export const GET_RESORTS = gql`
         firstName
         lastName
         rate
+        image
       }
     }
   }

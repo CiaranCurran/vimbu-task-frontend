@@ -43,6 +43,7 @@ export interface Instructor {
   rate: number;
   id: string;
   resort: Resort;
+  image: string;
 }
 
 export interface Resort {
