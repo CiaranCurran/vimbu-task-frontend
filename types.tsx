@@ -17,10 +17,15 @@ declare global {
   }
 }
 
+export type InstructorScreenParamList = {
+  instructor: Instructor;
+};
+
 export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Modal: undefined;
   NotFound: undefined;
+  InstructorScreen: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
