@@ -10,7 +10,12 @@ import MapView, { PROVIDER_GOOGLE, Marker, MapEvent } from "react-native-maps";
 import useColorScheme from "../hooks/useColorScheme";
 import React, { useRef, useState } from "react";
 import { Resort } from "../types";
-import Animated, { FadeIn, FadeOut, ZoomInUp } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  ZoomInDown,
+  ZoomInUp,
+} from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { InstructorList } from "./InstructorList";
 
@@ -44,11 +49,14 @@ export function MapSearch({ resorts }: MapSearchProps) {
     setShowDetails(false);
     map.current?.animateCamera(
       {
-        center: { latitude: 48.9049353, longitude: 11.3947024 },
+        center: {
+          latitude: initialRegion.latitude,
+          longitude: initialRegion.longitude,
+        },
         pitch: 2,
         heading: 0,
         altitude: 2000,
-        zoom: 5,
+        zoom: 4,
       },
       { duration: 500 },
     );
@@ -137,6 +145,9 @@ export function MapSearch({ resorts }: MapSearchProps) {
                   <Text style={styles.subHeader}>
                     {selectedResort?.country}
                   </Text>
+                  <Text style={styles.rate}>{`Lessons from €${Math.min(
+                    ...selectedResort?.instructors.map((i) => i.rate),
+                  )}/h`}</Text>
                 </View>
               </ImageBackground>
             </Animated.View>
@@ -145,13 +156,10 @@ export function MapSearch({ resorts }: MapSearchProps) {
               style={styles.gradientOverlay}
             />
           </Animated.View>
-          <Text
-            style={{ position: "absolute", bottom: 10 }}
-            onPress={onPressToExitHandler}
-          >
+          <Text style={styles.returnText} onPress={onPressToExitHandler}>
             {"Return to map"}
           </Text>
-          <View
+          <Animated.View
             style={{
               width: "100%",
               height: "20%",
@@ -159,9 +167,11 @@ export function MapSearch({ resorts }: MapSearchProps) {
               position: "absolute",
               bottom: "10%",
             }}
+            entering={ZoomInDown.duration(1000)}
+            exiting={FadeOut.duration(500)}
           >
             <InstructorList instructors={selectedResort?.instructors} />
-          </View>
+          </Animated.View>
         </>
       )}
     </View>
@@ -233,5 +243,19 @@ const themedStyles = (colorScheme: NonNullable<ColorSchemeName>) =>
       padding: 0,
       margin: 0,
       lineHeight: 22,
+    },
+    returnText: {
+      color: Colors.dark.text,
+      position: "absolute",
+      bottom: 10,
+      fontWeight: "bold",
+    },
+    rate: {
+      color: Colors.dark.text,
+      fontWeight: "bold",
+      fontSize: 20,
+      position: "absolute",
+      bottom: 10,
+      right: 10,
     },
   });
