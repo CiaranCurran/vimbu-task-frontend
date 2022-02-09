@@ -113,7 +113,7 @@ function BottomTabNavigator() {
         name="SearchScreen"
         component={SearchScreen}
         options={{
-          title: "Tab Two",
+          title: "Search",
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
