@@ -92,7 +92,7 @@ export function InstructorList({ instructors }: InstructorListProps) {
             <TouchableNativeFeedback
               style={styles.instructorView}
               onPress={() => {
-                navigation.navigate("InstructorScreen");
+                navigation.navigate("InstructorScreen", { instructor: item });
               }}
             >
               <View

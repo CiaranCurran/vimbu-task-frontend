@@ -1,19 +1,26 @@
-import { RouteProp, StackActions } from "@react-navigation/native";
+import {
+  NavigationProp,
+  RouteProp,
+  StackActions,
+} from "@react-navigation/native";
 import { Platform, StyleSheet, Image } from "react-native";
-
 import { Text, View } from "../components/Themed";
 import { Instructor } from "../types";
 
 type InstructorScreenParamList = {
-  route: RouteProp<{ params: { instructorParam: Instructor } }, "params">;
+  params: { instructor: Instructor };
+};
+
+type InstructorScreenProps = {
+  route: RouteProp<InstructorScreenParamList, "params">;
+  navigation: NavigationProp<InstructorScreenParamList>;
 };
 
 export default function InstructorScreen({
-  route: { params: instructorParam },
+  route,
   navigation,
-}) {
-  const instructor = { ...instructorParam } as Instructor;
-
+}: InstructorScreenProps) {
+  const instructor = { ...route.params.instructor } as Instructor;
   return (
     <View style={styles.container}>
       <Text
